@@ -751,7 +751,6 @@ with st.expander("📍 Landing Page Performance & Funnel Insights"):
 | **SCALE** | `/test-drive` | Increase send volume by **20–30%** and add more entry points | Highest conversion (11%) |
 | **FIX** | `/model-a` & `/model-b` | Improve offer clarity, add trust badges, CTA urgency & above-the-fold forms | High traffic, low efficiency (2.28%) |
 | **OPTIMIZE** | `/financing-emi` | Add calculators + progress indicators | Moderate traffic, decent intent (5%) |
-| **MAINTAIN** | `—` | — | No page is over-indexing on cost yet, so maintain distribution |
 
 ---
 
@@ -898,6 +897,8 @@ def build_prompt(user_query, results):
     - Use bullet points or markdown tables.
     - Group insights by Campaign / Ad Group / Keyword / Landing Page where relevant.
     - Be concise and direct. Avoid passive voice.
+    - Don't Provide 'As your Google Ads Strategist, I've analyzed your current performance data to provide clear, data-driven recommendations. The focus is on optimizing budget allocation, improving campaign efficiency, and enhancing user experience to drive better returns.' kind in response
+    - **Important:** for budget related question always give how much percentage budget to increase or decrease or re allocate.
 
     ---
 
@@ -916,7 +917,7 @@ def build_prompt(user_query, results):
 import pandas as pd
 import json
 import google.generativeai as genai
-GEMINI_API_KEY = "AIzaSyAQnn4bU64AyUVLwozvOSZ03eux0pfXJqM"
+GEMINI_API_KEY = "AIzaSyAPpRTIzq2Er0i36lIOU-WsUHxJi08LT5c"
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-2.5-flash")
 
@@ -996,7 +997,7 @@ if active_query:
     # st.chat_message("user").write(active_query)
     st.session_state.selected_question = None
     #with open("datasamples_actual.txt", "r") as file:
-    with open("datasamples.txt", "r") as file:
+    with open("datasamples_actual.txt", "r") as file:
         content = file.read()
     print(content)
 
@@ -1011,13 +1012,26 @@ if active_query:
             with st.spinner("[Data Analysis Agent] Analysing Data..."):
                 reply = gemini_response(prompt).strip()
             st.session_state.last_reply = reply
-            suggestions_rem = suggestions.remove(active_query) if active_query in suggestions else suggestions
-            followup_question = suggestions_rem
+            #st.info(suggestions)
+            #suggestions.remove(active_query)
+            #suggestions_rem = suggestions.copy()
+            #st.info(suggestions_rem)
+            followup_question = suggestions.copy()
             print(f"Extracted follow-up question: {followup_question}")
             st.session_state.followup_query = followup_question
 
             st.chat_message("assistant").write(reply)
             st.session_state.history.append(("assistant", reply))
+
+            #st.chat_message("assistant").write(f"👉 {followup_question}")
+            # st.markdown("#### Suggested Follow-Up Questions")
+            # cols = st.columns(2)
+            # for i, s in enumerate(followup_question):
+            #     with cols[i % 2]:
+            #         if st.button(s, key=f"fsugg_{i}"):
+            #             st.session_state.selected_question = s
+            #             st.experimental_rerun()
+
 
         else:
             st.error("Could not retrieve data. Please try again.")
