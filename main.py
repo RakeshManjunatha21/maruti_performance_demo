@@ -304,6 +304,39 @@ col5.metric("ROAS", f"{(total_conv_value/total_spend):.2f}" if total_spend>0 and
 
 st.markdown("---")
 
+#------------------------------------------------------------------------------------------
+st.markdown("""
+<div style="
+    padding:18px;
+    border-radius:10px;
+    background:#1e1e1e;
+    font-family:Arial;
+    line-height:1.55;
+    font-size:15px;
+    color:#e6e6e6;
+    border:1px solid #3a3a3a;
+">
+
+<h3 style="margin-top:0; color:#ffffff;">📊 Overall Summary</h3>
+
+<p><b style="color:#ffffff;">Brand campaigns</b> remain the highest-efficiency drivers (ROAS <b>2.96</b>, CPA <b>₹169</b>), while <b>Hatchbacks</b> consume the most spend but underperform (ROAS <b>0.66</b>, CPA <b>₹758</b>). <b>Finance/EMI</b> queries show strong potential (ROAS <b>1.07</b>) but are constrained by budget loss (<b>30% IS</b>), making them the top scale opportunity.</p>
+
+<p><b style="color:#ffffff;">Ad Group Performance</b> shows affordability and finance-driven intent converting best (CPA <b>₹520–₹600</b>), whereas comparison and SUV-based queries exceed <b>₹1,000</b> CPA. <b>Exact match</b> keywords outperform broad types, though generic and competitive terms show lower Quality Scores (<b>6/10</b>), increasing CPCs.</p>
+
+<p><b style="color:#ffffff;">Device breakdown</b> reveals a heavy reliance on <b>Mobile (97% of spend)</b> with the best scale and efficiency. Tablets show strong CPA (<b>₹550</b>) despite negligible volume, while desktop underperforms across CTR and CPA.</p>
+
+<p><b style="color:#ffffff;">Location insights</b> show Tier 1 cities driving volume but at a higher CPA (>₹800), whereas Tier 2 markets remain cost-efficient (₹480–₹540) with similar CVR — indicating room for smart budget redistribution.</p>
+
+<p><b style="color:#ffffff;">Landing page behaviour</b>: conversion rates are stable (2.3–2.5%), but bounce rates remain high (~50%), especially on <i>/wagonr</i> and <i>/baleno</i>, signalling relevance or UX gaps.</p>
+
+<p><b style="color:#ffffff;">Conversion mix</b> skews toward soft leads (Brochures: <b>11,200</b>) vs high-intent actions (Test Drives: <b>9,800</b>). <b>WhatsApp leads (2,800)</b> are emerging strongly — especially across Tier 2 audiences — indicating a channel preference shift.</p>
+
+</div>
+""", unsafe_allow_html=True)
+
+#------------------------------------------------------------------------------------------
+
+
 # ------------------ 1) Where are we spending money ------------------
 st.subheader("Money Spending — Spend distribution & hotspots")
 fig = px.bar(camp_df.sort_values('spend', ascending=False), x='campaign', y='spend', title='Campaign Spend (₹)')
@@ -323,6 +356,38 @@ if adgroup_sheet and isinstance(sheets.get(adgroup_sheet), pd.DataFrame):
         top_ag = ag.sort_values('cost', ascending=False).head(10)
         st.markdown("Top Ad Groups by Spend")
         st.plotly_chart(px.bar(top_ag, x=ag_name or ag.columns[0], y='cost'), use_container_width=True)
+
+#------------------------------------------------------------------------------------------
+with st.expander("📊 Spend Distribution Summary"):
+    st.markdown("""
+### Overview
+The spending pattern shows a clear focus on higher-intent generic and non-brand campaigns, complemented by brand and financing support campaigns. Budget allocation is consistent with an acquisition-focused strategy.
+
+---
+
+### Campaign-Level Spend Insights
+- A large share of the budget is assigned to **SUV Generic and Model-specific non-brand campaigns**, indicating intent to capture broad search demand.
+- **Brand and EMI-related campaigns** receive moderate allocation, supporting retargeting and mid-funnel conversions.
+- The lowest spend is on **Service/Test Drive**, which may limit bottom-funnel conversion efficiency if intent volume exists.
+
+---
+
+### Ad Group-Level Spend Insights
+The top spending ad groups are primarily **price-focused keywords** (Swift Price, Brezza Variants, Baleno Price, Ertiga Price, Dzire Price).  
+This suggests that users searching for cost-related queries form a major portion of paid traffic volume.
+
+A few mileage-focused and EMI calculator ad groups also show significant spend, reflecting interest in affordability and running costs.
+
+---
+
+### Summary Observations
+- Spend is concentrated in high-demand generic and price-based search terms.
+- Brand and funnel-supporting campaigns are active but not dominant.
+- A small portion of spend is allocated to conversion-ready categories like test drive and service, which may merit review depending on performance and funnel leakage.
+
+""")
+
+#------------------------------------------------------------------------------------------ 
 
 # ------------------ 2) What's working vs wasting budget ------------------
 st.subheader("Efficiency & Waste Reports")
@@ -376,32 +441,86 @@ if kw is not None:
             st.markdown("Keyword Funnel (sample top 10 by impressions)")
             st.dataframe(funnel.sort_values('Impressions', ascending=False).head(10))
 
-# ------------------ 3) Where should we increase/decrease investment? ------------------
-st.subheader("Increase or Decrease investment — Actionable suggestions")
-# Scale candidates: high ROAS and relatively lower spend
-scale_candidates = camp_df[(camp_df['roas'] > camp_df['roas'].median()) & (camp_df['spend'] < camp_df['spend'].median())]
-reduce_candidates = camp_df[(camp_df['roas'] < camp_df['roas'].median()) & (camp_df['spend'] > camp_df['spend'].median())]
+#------------------------------------------------------------------------------------------
+with st.expander("📊 Efficiency & Waste Report Summary"):
+    st.markdown("""
+### Performance Overview  
+Efficiency varies across campaigns, with a mix of strong performers and under-leveraged spend. Higher-spending campaigns do not consistently correlate with proportional conversions, indicating optimisation opportunities.
 
-st.markdown("**Recommend Increase Budget** (high ROAS, underfunded)")
-if not scale_candidates.empty:
-    st.dataframe(scale_candidates[['campaign','spend','roas','conversions']].sort_values('roas', ascending=False))
-else:
-    st.write("No immediate scale candidates found by the simple rule.")
+---
 
-st.markdown("**Recommend Decrease / Pause** (low ROAS, high spend)")
-if not reduce_candidates.empty:
-    st.dataframe(reduce_candidates[['campaign','spend','roas','conversions']].sort_values('spend', ascending=False))
-else:
-    st.write("No immediate reduce candidates found by the simple rule.")
+### Efficiency Signals  
+- Some mid-spend campaigns demonstrate strong conversion output, suggesting effective targeting and messaging alignment.
+- A few mid-volume clusters show reasonable spend-to-conversion balance, indicating they can be scaled further once proven.
 
-# ------------------ 4) What changes will improve ROAS ------------------
-st.subheader("Changes will improve ROAS — actions")
-st.write("""
-- Improve landing page conversion rates for campaigns with high spend & low CVR (see Landing Page section).  
-- Pause or convert to negative keywords any high-spend keywords with zero conversions.  
-- Reallocate budget to campaigns showing ROAS > median and low lost IS.  
-- Test creative/CTA for campaigns with high impressions but low CTR.
+---
+
+### Waste Indicators  
+- The **SUV Generic campaign** shows the largest gap between spend and conversion efficiency, with high cost and weak ROAS.
+- This suggests misalignment in keyword relevance, quality score, or landing page experience and should be prioritised for review.
+
+---
+
+### Keyword Funnel Insight  
+Top-impression queries skew heavily towards **price, comparison, and "best value" searches**, demonstrating strong pre-purchase intent.
+However:
+- Conversion efficiency varies significantly across keywords.
+- Queries with high interest do not always convert at the same rate, implying opportunity for **creative testing, page relevance improvement, or audience refinement**.
+
+---
+
+### Summary Observation  
+There is a clear opportunity to reduce wasted spend by tightening performance on high-cost, low-return campaigns while reinvesting into keyword clusters and campaigns displaying strong conversion efficiency.
+
 """)
+
+with st.expander("🧩 Priority Action Matrix"):
+    st.markdown("""
+### Fix (Immediate Optimization Required)
+
+| Campaign | Issue | Evidence | Recommended Action |
+|---------|-------|----------|--------------------|
+| **SUV Segment – Generic** | High spend but very weak return | Spend: ₹1.89M · ROAS: 0 · CPA: ₹1,260 · Low conversions relative to cost | Reduce budget by **40–60%**, tighten match types, remove broad keywords leaking spend, direct testing traffic to a more relevant landing page. |
+| **Model A Mileage Keywords** | Volume without proportional conversion | Impressions high but low conversion output in keyword funnel | Pause low-performing mileage keywords or move them into a separate test budget with tighter targeting. |
+
+---
+
+### Scale (Proven Efficiency, Underspending)
+
+| Campaign / Keyword Group | Strength | Evidence | Recommended Action |
+|--------------------------|----------|----------|--------------------|
+| **Price-Based Keyword Groups** – (Swift Price, Brezza Variants, Baleno Price, Ertiga Price, Dzire Price) | High interest, strong conversion contribution | Dominant in top-spend list but **still outperform mileage & comparison terms in conversion efficiency** | Increase budget by **15–25%**, create ad variant focused on EMI + call booking CTA to further lift conversions. |
+| **Brand (Exact)** | Stronger funnel alignment | Although lower spend, tends to deliver more qualified conversions | Increase spend slightly (10–15%) to reduce impression loss and capture high-intent queries before competitors. |
+
+---
+
+### Maintain (Stable Performance, Monitor Periodically)
+
+| Campaign | Status | Evidence | Recommended Action |
+|---------|--------|----------|--------------------|
+| **Competitor Conquesting** | Moderate efficiency and conversion lift | Good conversion relative to cost but not cheap | Keep as-is. Evaluate once per month. Do not scale until more audience learning stabilizes. |
+| **Finance / EMI Queries** | Balanced results | Relevant traffic with decent conversion alignment | Maintain current spend; consider testing high-converting offer angles or benefit-led creative. |
+
+---
+
+### Strategic Notes
+
+- Spend is currently **top-heavy and inefficient**, with **~25–30% budget trapped in high-cost / low-return generic terms**.
+- **Price and brand-led keywords** are driving meaningful conversions — scaling these improves ROAS quickly.
+- Mileage and comparison terms show weaker conversion behavior, suggesting users are **early-research stage** — keep them controlled or funnel into remarketing.
+
+---
+
+### Next Steps in Order of Impact
+
+1. **Cut inefficiency** → Reduce spend on SUV Generic + mileage terms.  
+2. **Shift budget** → Move recovered spend into high-performing price-based ad groups and brand campaigns.  
+3. **Refine funnel alignment** → Improve landing relevance for all generic high-volume keywords before considering scaling.
+
+""")
+
+
+#------------------------------------------------------------------------------------------
 
 # ------------------ Device & Location ------------------
 st.markdown("---")
@@ -432,32 +551,74 @@ if loc_sheet and isinstance(sheets.get(loc_sheet), pd.DataFrame):
 else:
     st.info("Location performance sheet not found in uploaded file (using sample data).")
 
-# ------------------ Weekly Trends ------------------
-# st.markdown("---")
-# st.subheader("Weekly Time Series & Trend")
-# if weekly_sheet and isinstance(sheets.get(weekly_sheet), pd.DataFrame):
-#     w = clean_df(sheets[weekly_sheet])
-#     # normalize week -> index
-#     w.columns = [c.strip() for c in w.columns]
-#     # coerce numeric
-#     for c in w.columns:
-#         w[c] = w[c].map(safe_num) if w[c].dtype==object else w[c]
-#     st.dataframe(w)
-#     # line plots
-#     plot_cols = [c for c in ['Impressions','Clicks','Cost','Conversions'] if c in w.columns or c.lower() in [x.lower() for x in w.columns]]
-#     if plot_cols:
-#         # try to map by lower
-#         col_map = {c: next((col for col in w.columns if col.lower().startswith(c.lower())), None) for c in ['Impressions','Clicks','Cost','Conversions']}
-#         ycols = [col_map[c] for c in col_map if col_map[c]]
-#         fig = px.line(w, x=w.columns[0], y=ycols, title="Weekly trends")
-#         st.plotly_chart(fig, use_container_width=True)
-# else:
-#     # if not provided, build trend from campaign summary totals across the 4-week sample if present
-#     if 'Weekly Trends' in sheets:
-#         w = clean_df(sheets['Weekly Trends'])
-#         st.dataframe(w)
-#         fig = px.line(w, x='Week', y=['Impressions','Clicks','Cost','Conversions'], title='Weekly Trends (sample)')
-#         st.plotly_chart(fig, use_container_width=True)
+#------------------------------------------------------------------------------------------
+with st.expander("📊 Device & Location Insights Summary"):
+    st.markdown("""
+### Performance Highlights
+
+#### **Device Trends**
+- **Mobile dominates** with **90% of impressions** and **≈88% of clicks**.
+- **Tablet traffic is very low** but delivers the **lowest CPA (₹550)** → surprisingly efficient.
+- **Desktop traffic is moderate** but has a **high CPA (₹867)** and **lower CVR** vs mobile.
+
+#### **Top Performing Cities (ROI & Cost Efficiency)**  
+Based on Conversion + CPA + Scale Potential:
+
+| Rank | City | Reason |
+|------|------|--------|
+| 1 | **Delhi** | Highest spend (₹1.56M) + strong conversions + healthy CTR (5%) |
+| 2 | **Mumbai** | Large volume & strong conversion rate at reasonable CPA |
+| 3 | **Bangalore** | Third-highest conversions with decent CPC & CTR |
+
+#### **Underperforming but Scalable**
+- **Hyderabad & Chennai:** Good traffic volume but **lower CTR & CVR** → opportunity for ad/LP refinement.
+
+#### **Low-ROI Tail Cities**
+- **Jaipur, Lucknow & Kolkata:** Low conversions + higher CPA → consider downsizing or restructuring campaigns.
+
+---
+    """)
+
+with st.expander("🧩 Priority Action Matrix"):
+    st.markdown("""
+| Category | Item | Action | Reason |
+|----------|--------|---------|--------|
+| **SCALE** | Mobile | Increase budget | Best CTR, conversions & total reach |
+|  | Delhi, Mumbai, Bangalore | Increase bids + expand keywords | Strong scale with proven efficiency |
+|  | Tablet | Test incremental scaling | Small volume but best CPA (₹550) |
+| **🛠 FIX** | Desktop | Reduce cost or restructure ads | High CPA (₹867) & low conversion efficiency |
+|  | Hyderabad & Chennai | Improve creatives + landing experience | High traffic but weak conversion performance |
+| **MAINTAIN** | Pune & Ahmedabad | Stable performance | Healthy CPA & conversions — no drastic action |
+| **DE-PRIORITIZE** | Jaipur, Kolkata, Lucknow | Limit bids / shift to remarketing | Low return + higher CPA |
+    """)
+
+with st.expander("🧠 Recommended Actions"):
+    st.markdown("""
+#### Device-Level Actions
+- **Reallocate 10–15% budget from Desktop → Mobile**
+- **Test responsive/AMP landing pages for Mobile to amplify already strong results**
+- Run **Tablet-only A/B tests** before scaling (due to small base but high efficiency).
+
+---
+
+#### Location-Level Strategy
+
+**Scale Immediately:**
+- Delhi, Mumbai, Bangalore  
+→ Add **broad match + automated bidding** + **local ad extensions**.
+
+**Fix Campaign Structure & Messaging:**
+- Hyderabad, Chennai  
+→ Update creatives (local language variant optional), refine targeting, test LP variants.
+
+**Restrict / Move to Retargeting Only:**
+- Jaipur, Lucknow, Kolkata  
+→ Reduce exposure on cold traffic and test only **high intent keywords + remarketing**.
+
+---
+    """)
+
+#------------------------------------------------------------------------------------------
 
 # ------------------ Landing Page Analysis ------------------
 st.markdown("---")
@@ -539,7 +700,7 @@ if isinstance(lp, pd.DataFrame):
             funnel_df,
             path=["Landing Page"],
             values="Leads",
-            title="🌳 Which Landing Pages Generate the Most Leads?"
+            title="Landing Pages Generate the Most Leads?"
         )
         st.plotly_chart(fig3, use_container_width=True)
 
@@ -557,6 +718,70 @@ if isinstance(lp, pd.DataFrame):
 else:
     st.info("Landing Page sheet not found in uploaded file.")
 
+#------------------------------------------------------------------------------------------
+with st.expander("📍 Landing Page Performance & Funnel Insights"):
+    st.markdown("""
+### Summary
+
+| Landing Page | Sessions | Leads | Conversion Rate |
+|--------------|----------|-------|----------------|
+| `/test-drive` | 18,000 | 1,980 | **11.0%** |
+| `/financing-emi` | 22,500 | 1,125 | **5.0%** |
+| `/model-b` | 31,500 | 720 | **2.285%** |
+| `/model-a` | 42,000 | 960 | **2.285%** |
+
+---
+
+- **/test-drive is the strongest performer** — lowest traffic but **4–5× higher conversion efficiency** than product model pages → indicates **high intent traffic**.
+- **Financing page converts better than model pages**, meaning users want clarity on pricing before product details.
+- **Model-based landing pages generate highest traffic but lowest conversion efficiency** → **awareness traffic rather than transactional**.
+
+---
+
+### User Funnel Behavior (Actual Insight)
+
+> Users first explore the **models → compare pricing/EMI → finally move to Test Drive**, where intent peaks.
+
+---
+
+### 🧩 Priority Action Matrix
+
+| Category | Page | Action | Reason |
+|---------|------|--------|--------|
+| **SCALE** | `/test-drive` | Increase send volume by **20–30%** and add more entry points | Highest conversion (11%) |
+| **FIX** | `/model-a` & `/model-b` | Improve offer clarity, add trust badges, CTA urgency & above-the-fold forms | High traffic, low efficiency (2.28%) |
+| **OPTIMIZE** | `/financing-emi` | Add calculators + progress indicators | Moderate traffic, decent intent (5%) |
+| **MAINTAIN** | `—` | — | No page is over-indexing on cost yet, so maintain distribution |
+
+---
+
+### 🧠 Recommended Improvements
+####  For `/model-a` & `/model-b` (Fix)
+- Add **test-drive CTA above the fold**
+- Add **pricing teaser** → "Starting at ₹XX/month"
+- Introduce **model comparison**, since users may be evaluating.
+
+Expected outcome: +1.5–2.5pp uplift in conversion rate.
+
+---
+
+#### For `/test-drive` (Scale)
+- Add direct entry links from ads to test-drive for **high-intent keywords**
+- Create **mobile sticky CTA** like: `📍 Book Test Drive → 20 sec form`
+
+Expected outcome: Increase total leads by **20–30% without increasing traffic**.
+
+---
+
+#### For `/financing-emi` (Optimize)
+- Add interactive EMI calculator + real user examples.
+- A/B test “Apply for pre-approval” CTA.
+
+Expected outcome: CRT increase from **5% → 6.5–7%**.
+
+    """)
+
+#------------------------------------------------------------------------------------------
 
 # ------------------ Search Terms & Conversion Types ------------------
 st.markdown("---")
@@ -573,9 +798,71 @@ if conv_type_sheet and isinstance(sheets.get(conv_type_sheet), pd.DataFrame):
     total_value = convs['Total Value'].map(safe_num).sum() if 'Total Value' in convs.columns else np.nan
     st.metric("Total Conversion Value (₹)", f"{int(total_value):,}" if not np.isnan(total_value) else "N/A")
 
+#------------------------------------------------------------------------------------------
+with st.expander("📊 Search Terms & Conversion Insights"):
+    st.markdown("""
+### Summary  
+Search demand is driven largely by **price and comparison-focused queries**, indicating users are in **consideration mode** rather than purely awareness.
+
+Pages that trigger **Test Drive conversions deliver higher value per session**, while generic queries still generate meaningful volume.
+
+---
+
+###  Performance Highlights
+
+| Type | Insight |
+|------|---------|
+| **Highest Demand** | *"best car under 10 lakhs for family"* with **200k impressions**, strong CTR (6%), but low conversion volume → price sensitivity. |
+| **Highest Engagement** | *"baleno price delhi 2025"* CTR: **7.5%** — strong purchase intent but moderate conversion. |
+| **Strong Intent Queries** | Comparison search *"brezza vs venue sx"* converts to **Test Drive**, showing shoppers evaluating final choices. |
+
+---
+
+### Search Intent Funnel
+
+> **Price → EMI Interest → Brand → Comparison → Test Drive**
+
+Users begin with broad affordability queries, validate financing, then move to brand research and finally conversion.
+
+---
+
+### Conversion Value Distribution
+
+| Conversion Type | Count | Total Value | Observation |
+|----------------|-------|-------------|-------------|
+| **Test Drive** | 9,800 | **₹7,840,000** | Highest financial impact — priority driver. |
+| **Brochure Download** | 11,200 | **₹3,360,000** | Top volume entry point — nurture required. |
+| **Dealer Call** | 5,400 | **₹3,240,000** | Ready-to-buy signal — funnel shortening. |
+| **WhatsApp Lead** | 2,800 | **₹1,120,000** | High convenience channel — optimize for mobile journeys. |
+
+**Total conversion value tracked: ₹15,560,000**
+
+---
+
+### 🧩 Priority Action Matrix
+
+| Category | What to Focus On | Why |
+|----------|------------------|-----|
+| **Scale** | Queries generating **Test Drive conversions** like *“baleno price”* & *“brezza vs venue”* | High value per user & final intent signals |
+| **Fix** | Informational searches like *“best car under 10 lakhs”* | High traffic but weak conversion efficiency |
+| **Maintain** | EMI-related keywords | Balanced CTR + conversions → good mid-funnel impact |
+
+---
+
+### 🧠 Optimization Recommendations
+
+- **Increase bids** on *baleno price*, *brezza vs venue sx*, and comparison terms → they lead to **Test Drive** outcomes.
+- **Create a tailored landing experience** for high-volume generic terms (e.g., Top 5 cars under 10L) to match user expectation.
+- **Route EMI traffic directly to `/financing-emi` with calculator pre-loaded**, since search behavior shows strong price planning intent.
+- **Boost WhatsApp CTA during evening & mobile traffic**, as buyer convenience leads to more micro-conversions.
+
+    """)
+
+#------------------------------------------------------------------------------------------
+
 # ------------------ Export combined CSV ------------------
 st.markdown("---")
-st.subheader("Export")
+st.subheader("Export Analysis Data")
 try:
     combined = pd.concat([clean_df(s) for s in sheets.values()], sort=False)
     buf = BytesIO()
@@ -584,3 +871,158 @@ try:
     st.download_button("Download combined CSV", data=buf, file_name="maruti_ads_combined.csv", mime="text/csv")
 except Exception as e:
     st.warning("Could not prepare combined CSV: " + str(e))
+
+#--------------------------------------------CHATBOT--------------------------------------------
+#----------------------------------------------------------------------------------------------
+
+st.set_page_config(page_title="Maruti Google Ads Chatbot", layout="wide")
+st.title("Maruti Google Ads - Intelligence Assistant Chatbot")
+#--
+def build_prompt(user_query, results):
+    prompt = f"""
+    You are a **Google Ads Strategist** and your task is to analyze the current Google Ads data below using only measurable metrics (e.g., CTR, Conversions, Quality Score, Impression Share, etc.) and provide **clear, data-driven recommendations**.
+
+    Avoid assumptions or generic tips. Align all strategies strictly with **Google Ads best practices** and the user query intent.
+    Use tables or bullet points for better clarity. Avoid passive tone.
+    Clear and concise insights (numbers, trends, outliers)
+    Bounce rate, CTR, impressions, conversions if visible in the data
+    
+    ---
+
+    ### Responsibilities:
+
+    **1. Strategic Recommendations**
+    - Support every recommendation with direct metrics from the data.
+
+    **2. Output Format**
+    - Use bullet points or markdown tables.
+    - Group insights by Campaign / Ad Group / Keyword / Landing Page where relevant.
+    - Be concise and direct. Avoid passive voice.
+
+    ---
+
+    ### 📥 User Query:
+    {user_query}
+
+    ### 📈 Google Ads Data:
+    {results}
+    """
+    return prompt
+#--
+
+# ─────────────────────────────────────────────────────
+# GEMINI CONFIGURATION
+# ─────────────────────────────────────────────────────
+import pandas as pd
+import json
+import google.generativeai as genai
+GEMINI_API_KEY = "AIzaSyAQnn4bU64AyUVLwozvOSZ03eux0pfXJqM"
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-2.5-flash")
+
+def gemini_response(prompt: str) -> str:
+    resp = model.generate_content(prompt)
+    return (
+        resp.candidates[0].content.parts[0].text
+        if hasattr(resp, "candidates") else resp.text
+    )
+
+
+suggestions = [
+    "Which campaigns have a ROAS below 1.0, and how much budget are they consuming?",
+    "Are there any high-performing campaigns that are losing impression share due to limited budget?",
+    "Compare the CPA of our 'Brand' campaigns versus our 'Generic' vehicle campaigns?",
+    "Rank our top 5 cities by CPA from lowest to highest. Do you see a trend between Metros and Tier 2 cities?",
+    "Correlate our device spend with our landing page bounce rates. Is our mobile traffic converting efficiently?",
+    "Identify keywords with a Quality Score below 7 that are spending more than ₹1 Lakh?",
+    "What is the CPA difference between users looking for 'Price' versus those looking for 'Comparison'?"
+]
+
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+if "selected_question" not in st.session_state:
+    st.session_state.selected_question = None
+
+if "followup_query" not in st.session_state:
+    st.session_state.followup_query = None
+
+if "last_reply" not in st.session_state:
+    st.session_state.last_reply = None
+
+
+st.markdown("#### Suggested Questions")
+cols = st.columns(2)
+for i, s in enumerate(suggestions):
+    with cols[i % 2]:
+        if st.button(s, key=f"sugg_{i}"):
+            st.session_state.selected_question = s
+
+for role, msg in st.session_state.history:
+    st.chat_message(role).write(msg)
+
+user_input = st.chat_input("Ask your Google Ads performance question...")
+# active_query = user_input or st.session_state.selected_question
+
+if user_input:
+    # If user says yes and a follow-up exists, use it
+    if user_input.strip().lower() in ["yes", "y"]:
+        print("Continuing with follow-up query...")
+        if st.session_state.get("followup_query"):
+            print(f"Using follow-up query: {st.session_state['followup_query']}")
+            active_query = st.session_state["followup_query"]
+            st.chat_message("user").write(user_input)
+            st.session_state.history.append(("user", user_input))
+        else:
+            st.warning("There is no follow-up query to continue from.")
+            active_query = None
+    else:
+        # Otherwise treat the message as a new query
+        active_query = user_input
+        st.chat_message("user").write(user_input)
+        st.session_state.history.append(("user", user_input))
+
+elif st.session_state.selected_question:
+    active_query = st.session_state.selected_question
+    st.chat_message("user").write(active_query)
+    st.session_state.history.append(("user", active_query))
+    st.session_state.selected_question = None
+else:
+    active_query = None
+
+
+if active_query:
+    # st.session_state.history.append(("user", active_query))
+    # st.chat_message("user").write(active_query)
+    st.session_state.selected_question = None
+    #with open("datasamples_actual.txt", "r") as file:
+    with open("datasamples.txt", "r") as file:
+        content = file.read()
+    print(content)
+
+
+    all_results = [content]
+    errors = []
+    print(active_query)
+
+    try:
+        if all_results:
+            prompt = build_prompt(active_query, all_results)
+            with st.spinner("[Data Analysis Agent] Analysing Data..."):
+                reply = gemini_response(prompt).strip()
+            st.session_state.last_reply = reply
+            suggestions_rem = suggestions.remove(active_query) if active_query in suggestions else suggestions
+            followup_question = suggestions_rem
+            print(f"Extracted follow-up question: {followup_question}")
+            st.session_state.followup_query = followup_question
+
+            st.chat_message("assistant").write(reply)
+            st.session_state.history.append(("assistant", reply))
+
+        else:
+            st.error("Could not retrieve data. Please try again.")
+            st.code("\n".join(errors))
+
+    except Exception as e:
+        st.error(f"Could not retrieve data. Please try again. error: {str(e)}")
+        st.code("\n".join(errors))
