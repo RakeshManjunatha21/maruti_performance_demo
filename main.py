@@ -1038,6 +1038,7 @@ if active_query:
             st.code("\n".join(errors))
 
     except Exception as e:
-        st.error(f"Could not retrieve data. Please try again. error: {str(e)}")
+        st.error(f"Could not retrieve data. Please try again.")
         st.code("\n".join(errors))
+
 
