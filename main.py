@@ -917,7 +917,7 @@ def build_prompt(user_query, results):
 import pandas as pd
 import json
 import google.generativeai as genai
-GEMINI_API_KEY = "AIzaSyAPpRTIzq2Er0i36lIOU-WsUHxJi08LT5c"
+GEMINI_API_KEY = "AIzaSyDg0960MYkvUThS5JTW20LVlal5_uQKWvQ"
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-2.5-flash")
 
@@ -1040,3 +1040,4 @@ if active_query:
     except Exception as e:
         st.error(f"Could not retrieve data. Please try again. error: {str(e)}")
         st.code("\n".join(errors))
+
