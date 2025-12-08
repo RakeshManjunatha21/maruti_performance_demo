@@ -1,0 +1,61 @@
+Questions and Sample Response:
+
+Q1: "Which campaigns have a ROAS below 1.0, and how much budget are they consuming?"
+Apt Answer:
+"We have four campaigns underperforming with a ROAS below 1.0, consuming a massive ₹1.29 Crores (Total Cost). The biggest offender is the 'Hatchbacks' campaign, which has spent ₹49.5 Lakhs but only delivered a 0.66 ROAS. Other notable underperformers are 'SUVs' (0.70 ROAS, ₹36.5L spend) and 'Sedans' (0.67 ROAS, ₹23L spend). Essentially, 65% of your total budget is going to campaigns that return less value than they cost."
+•	Evidence:
+o	Hatchbacks: Cost ₹4,950,000 | ROAS 0.66
+o	SUVs: Cost ₹3,648,000 | ROAS 0.70
+o	Sedans: Cost ₹2,304,000 | ROAS 0.67
+
+-------------------------------------------------------
+Q2: "Are there any high-performing campaigns that are losing impression share due to limited budget?"
+Apt Answer:
+"Yes, the 'Finance/EMI' campaign is your biggest missed opportunity. It is one of your few campaigns with a positive ROAS (1.07) and a highly efficient CPA (₹560), yet it is losing 30% of its potential Impression Share solely due to budget caps. We are effectively 'turning off' our most profitable ads while letting inefficient ones run wild."
+•	Evidence:
+o	Finance/EMI: Lost IS (Budget) 30% | ROAS 1.07 | CPA ₹560 (vs Account Avg ~₹800).
+
+-----------------------------------------------------
+Q3: "Compare the CPA of our 'Brand' campaigns versus our 'Generic' vehicle campaigns."
+Apt Answer:
+"There is a massive 5x cost disparity. Your 'Brand' campaign acquires customers for just ₹169, whereas your generic vehicle campaigns like 'SUVs' and 'Hatchbacks' cost an average of ₹879 per acquisition. While generic terms are necessary for volume, they are currently 420% more expensive than your brand terms."
+•	Evidence:
+o	Brand CPA: ₹169
+o	Hatchback CPA: ₹758 | SUV CPA: ₹1,000 (Avg of these two: ₹879).
+
+-----------------------------------------------------
+Q4: "Rank our top 5 cities by CPA from lowest to highest. Do you see a trend between Metros and Tier 2 cities?"
+Apt Answer:
+"There is a clear divide. Your top 3 most efficient cities are all Tier 2 locations: Lucknow (₹480), Jaipur (₹507), and Ahmedabad (₹540). In contrast, your most expensive cities are the major metros: Delhi (₹812), Bangalore (₹810), and Mumbai (₹803). Effectively, you can acquire 1.6 customers in Lucknow for the price of 1 in Delhi."
+•	Evidence:
+o	Tier 2 Avg CPA: ~₹509
+o	Metro Avg CPA: ~₹808
+o	Cost Difference: (808 - 509) / 509 = +58% premium for Metros.
+
+-----------------------------------------------------
+Q5: "Correlate our device spend with our landing page bounce rates. Is our mobile traffic converting efficiently?"
+Apt Answer:
+"We have a critical 'Mobile Leak' issue. 97.3% of your ad spend (₹9.72 Crores) is on Mobile, yet your key mobile landing pages like '/wagonr' and '/baleno' have bounce rates of 52% and 50% respectively. We are paying to send millions of users to pages where half of them leave immediately."
+•	Evidence:
+o	Mobile Spend Share: 97.3%
+o	Bounce Rates: /wagonr (52%), /baleno (50%), /dzire (49%).
+
+-----------------------------------------------------
+Q6: "Identify keywords with a Quality Score below 7 that are spending more than ₹1 Lakh."
+Apt Answer:
+"We are wasting money on low-relevance terms. The keywords 'best hatchback 2025', 'brezza vs venue', and 'grand vitara mileage' all have a Quality Score of 6 but have collectively spent over ₹9.8 Lakhs. The low Quality Score is inflating their CPAs to ~₹900-1000, significantly higher than your account average."
+•	Evidence:
+o	best hatchback 2025: QS 6 | Cost ₹302,400 | CPA ₹900
+o	brezza vs venue: QS 6 | Cost ₹348,000 | CPA ₹967
+o	grand vitara mileage: QS 6 | Cost ₹336,000 | CPA ₹1,067
+
+-------------------------------------------------------
+Q7: "What is the CPA difference between users looking for 'Price' versus those looking for 'Comparison'?"
+Apt Answer:
+"Comparison shoppers are slightly more expensive and harder to convert. Ad groups focused on 'Comparison' or 'Vs' (e.g., Fronx Comparison) have an average CPA of ₹860, compared to 'Price' related ad groups which average ₹855. While the cost difference is small, the intent difference is key—comparison queries often have lower Quality Scores (as seen with 'brezza vs venue' at QS 6), making them a riskier investment."
+•	Evidence:
+o	Comparison Ad Groups Avg CPA: ₹860 (Calculated from available ad group data)
+o	Price Ad Groups Avg CPA: ₹855
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------Actual DATA------------------------------------------------------------------------------------
